@@ -7,7 +7,6 @@ using Microsoft.Exchange.WebServices.Data;
 
 String ewsUrl = "https://mail.lenovo.com/ews/exchange.asmx";
 String userName, password, mailbox;
-String recpt = ;
 Console.WriteLine("Please Input User name(xxx@xxx.xxx):");
 userName = Console.ReadLine();
 Console.WriteLine("Please Input Password For User:"+userName);
@@ -27,7 +26,7 @@ static void sendEmail(ExchangeService service, FolderId folder)
     try
     {
         EmailMessage email = new EmailMessage(service);
-        recpt = "youremailAddress@gmail.com";
+        String recpt = "youremailAddress@gmail.com";
         email.ToRecipients.Add(recpt);
         email.Subject = "HelloWorld";
         email.Body = new MessageBody("This is the first email I've sent by using the EWS Managed API");
