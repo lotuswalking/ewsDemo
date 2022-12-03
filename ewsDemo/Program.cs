@@ -1,14 +1,22 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 using System;
+using System.Numerics;
+using System.Runtime.InteropServices;
 using System.Security;
 using Microsoft.Exchange.WebServices.Data;
 
 
-String ewsUrl = "https://mail.lenovo.com/ews/exchange.asmx";
-String userName, password, mailbox;
-Console.WriteLine("Please Input User name(xxx@xxx.xxx):");
-userName = Console.ReadLine();
+
+//String ewsUrl = "https://mail.lenovo.com/ews/exchange.asmx";
+//String ewsUrlOL = "https://outlook.office365.com/EWS/Exchange.asmx ";
+String userName, password, mailbox,mailhost;
+//Console.WriteLine("Where your want to Connect to? For Office 365 you could input:(outlook.office365.com)");
+mailhost = ReadLine.Read("Where your want to Connect to? For Office 365 you could input:outlook.office365.com\n","outlook.office365.com");
+String ewsUrl = String.Format("https://{0}/ews/exchange.asmx",mailhost);
+Console.WriteLine("Ews URL is: "+ewsUrl);
+String actionFlag = ReadLine.Read("What's do you want to do? 1 For list 10 email(default), 2 for send test email to your self: 1\n", "1");
+userName = ReadLine.Read("Please Input User name(xxx@xxx.xxx):");
 Console.WriteLine("Please Input Password For User:"+userName);
 password = getPassword();
 
@@ -17,16 +25,24 @@ service.Credentials = new WebCredentials(userName,password);
 service.TraceEnabled = false;
 service.TraceFlags = TraceFlags.DebugMessage;
 service.Url = new Uri(ewsUrl);
-//listEmail(service, new FolderId(WellKnownFolderName.Inbox, userName));
-sendEmail(service, new FolderId(WellKnownFolderName.SentItems, userName));
+if(actionFlag.Trim().Equals("1")) {
+    listEmail(service, new FolderId(WellKnownFolderName.Inbox, userName));
+}
+else if(actionFlag.Trim().Equals("2")) {
+    sendEmail(service, new FolderId(WellKnownFolderName.SentItems, userName),userName);
+}else
+{
+    Console.WriteLine("No Action Defined");
+}
 
-//Console.ReadLine();
-static void sendEmail(ExchangeService service, FolderId folder)
+ReadLine.Read("presss enter to Quit!");
+
+static void sendEmail(ExchangeService service, FolderId folder,String recpt)
 {
     try
     {
         EmailMessage email = new EmailMessage(service);
-        String recpt = "youremailAddress@gmail.com";
+        //String recpt = "youremailAddress@gmail.com";
         email.ToRecipients.Add(recpt);
         email.Subject = "HelloWorld";
         email.Body = new MessageBody("This is the first email I've sent by using the EWS Managed API");
